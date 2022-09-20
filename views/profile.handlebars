@@ -1,0 +1,43 @@
+<span class="sub_page">
+{{> header}}
+<section class="container">
+<div class="banner-user">
+    <div class="banner-content">
+        <div class="media">
+            <div class="user-img-container">
+                <img src="/usercontent/{{this.userObj.profile_picture}}" class="user-img" alt="Profile picture">
+            </div>
+            <div class="media-body">
+                <h3 class="item-title">
+                    {{this.userObj.fname}} {{this.userObj.lname}} | <span id="user-id">{{this.userObj.id}}</span>                  
+                </h3>
+                <div class="item-subtitle">
+                    {{this.userObj.address}}
+                </div>   
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <h2>Shopping cart</h2>
+</div>
+<div class="container">
+    <div>
+        <p>Cart ID: <span id="cartId">{{this.cartId}}</span></p>
+    </div>
+    <ul class="profile-product-ul">
+        {{#each products}}
+            <li>
+                <img src={{this.image}}>
+                <p>{{this.name}}</p>
+                <p>Price: {{this.price}}</p>
+                <p>Amount {{this.amount}}</p>
+            </li>
+        {{/each}}
+    </ul>
+    <div class="purchase-button" id="place-purchase"><p>Place purchase</p></div>
+</div>
+</section>
+{{> footer}}
+{{> scripts}}
+</span>
