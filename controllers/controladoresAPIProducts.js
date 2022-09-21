@@ -1,9 +1,8 @@
-import { faker } from "@faker-js/faker";
 import { fork } from 'child_process';
 import { Product } from "../business/business.js";
 import ProductManager from "../database/data access objects/product-dao.js";
 
-const controladoresAPI = {
+const controladoresAPIProducts = {
     
     getAllProducts: async (req, res) => {
         const products = await ProductManager.getAllProducts();
@@ -125,4 +124,4 @@ const controladoresAPI = {
     }
 };
 
-export default controladoresAPI;
+export default controladoresAPIProducts;

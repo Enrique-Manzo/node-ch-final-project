@@ -1,5 +1,3 @@
-import {mail} from "../communication/emails/sendgridConfig.js";
-import twilio from "twilio";
 import CartManager from "../database/data access objects/carts-dao.js";
 import ProductManager from "../database/data access objects/product-dao.js";
 import SaleManager from "../database/data access objects/sale-dao.js";

@@ -2,7 +2,6 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import database from "../../database/contenedores/contenedorMongoDB.js";
 import bcrypt from "bcrypt";
-import {mail} from "../../communication/emails/sendgridConfig.js";
 
 const ADMIN_EMAIL = "enq.manzo@gmail.com";
 
@@ -15,23 +14,6 @@ async function registrarUsuario(datos) {
     datos.id = new Date().getTime();
     datos.carts = [];
     
-    const msg = {
-        to: ADMIN_EMAIL,
-        from: ADMIN_EMAIL,
-        subject: 'Nuevo registro',
-        text: 'Nuevo registro de usuario',
-        html: `<ul>
-                    <li>Nombre: ${datos.fname}</li>
-                    <li>Apellido: ${datos.lname}</li>
-                    <li>Username: ${datos.username}</li>
-                    <li>Address: ${datos.address}</li>
-                    <li>Phone number: ${datos.phoneNo}</li>
-                    <li>Age: ${datos.age}</li>
-                </ul>`,
-    };
-
-    mail.send(msg);
-
     const user = await database.insertObject("ecommerce", "users", datos)
 
     return user

@@ -1,6 +1,5 @@
 import express from "express";
 import { Server as SocketServer } from "socket.io";
-import {controladoresForm} from "./controllers/controladoresForm.js"
 import routerWeb from "./routers/routerWeb.js";
 import routerAPI from "./routers/routerAPI.js";
 import routerAuth from "./routers/routerAuth.js";
@@ -15,11 +14,8 @@ import cors from "cors";
 import { passportMiddleware, passportSessionHandler } from "./middlewares/authentication/passport.js";
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
-import cluster from 'cluster';
 import os from 'os';
 import compression from "compression";
-import logger from "./loggers/logger.js";
-import { graphqlMiddleware } from "./middlewares/graphql/graphqlMiddleware.js";
 
 // PATHS
 import * as path from 'path'; //const path = require('path');
@@ -142,15 +138,11 @@ app.use("/info", compression(), (req, res)=> {
     res.json(info)
 })
 
-app.use("/graphql", graphqlMiddleware)
-
 app.all('*', (req, res) => {
     const { url, method } = req
     logger.warn(`Ruta ${method} ${url} no implementada`)
     res.send(`Ruta ${method} ${url} no está implementada`)
   })
-
-app.post("/product-form", controladoresForm.postProduct) // handled by Express - receives form posts
 
 // CLI COMMAND VARIABLES
 
@@ -159,35 +151,6 @@ const args = parseArgs(process.argv.slice(2), {
         PORT: 8080,
     }
 })
-
-// CLUSTER
-/*
-if (cluster.isPrimary) {
-    const numCPUs = os.cpus().length
-    console.log(`PID PRIMARIO ${process.pid}`)
-
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork()
-    }
-
-    cluster.on('exit', (worker, code, signal) => {
-        console.log(`Worker ${worker.process.pid} died`)
-        for (let id in cluster.workers) {
-            cluster.workers[id].kill();
-            }
-            // exit the master process
-            process.exit(0);
-    })
-} else {
-    // SERVER
-    const server = httpServer.listen(args.PORT, ()=>{
-        console.log(`Server listening on port ${server.address().port} | Worker process ${process.pid}`)
-    });
-
-    // ERROR CALLS
-    server.on("error", error => console.log(`Server error ${error}`));
-}
-*/
 
 // SERVER
 const server = httpServer.listen(process.env.PORT || args.PORT, ()=>{

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import controladoresAPI from "../controllers/controladoresAPI.js";
-import controladoresAPICarrito from "../controllers/controladoresAPICarrito.js";
+import controladoresAPIProducts from "../controllers/controladoresAPIProducts.js";
+import controladoresAPICarrito from "../controllers/controladoresAPICarritos.js";
 import multer from "multer";
 
 // MULTER
@@ -39,20 +39,20 @@ function adminCheck(req, res, next) {
 
 // PRODUCTOS
 
-routerAPI.get("/productos", controladoresAPI.getAllProducts);
-routerAPI.get("/productoRandom", controladoresAPI.getRandomProduct);
-routerAPI.get("/product/:id", controladoresAPI.getProductById);
-routerAPI.post("/product", adminCheck, controladoresAPI.postProduct);
-routerAPI.delete("/product/:id", adminCheck, controladoresAPI.deleteProduct);
-routerAPI.put("/product/:id", adminCheck, controladoresAPI.updateProduct);
-routerAPI.get("/productos/test", controladoresAPI.getTestProducts);
+routerAPI.get("/products", controladoresAPI.getAllProducts);
+routerAPI.get("/products/:id", controladoresAPI.getProductById);
+routerAPI.post("/products", adminCheck, controladoresAPI.postProduct);
+routerAPI.delete("/products/:id", adminCheck, controladoresAPI.deleteProduct);
+routerAPI.put("/products/:id", adminCheck, controladoresAPI.updateProduct);
 
 // CARRITO
 
 routerAPI.get("/user_id", controladoresAPICarrito.getUserId);
 routerAPI.post("/add_to_cart", controladoresAPICarrito.postProductToCart);
 routerAPI.post("/finish_purchase", controladoresAPICarrito.postFinishPurchase);
-
+routerAPI.get("/shoppingcartproducts")
+routerAPI.post("/shoppingcartproducts")
+routerAPI.delete("/shoppingcartproducts/:id")
 
 // CHILD PROCESSES
 
