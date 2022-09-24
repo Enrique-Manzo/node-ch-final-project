@@ -75,6 +75,25 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
+            const collectionObject = await userCollection.findOne({id: parseInt(objectID)});
+        
+            return collectionObject
+        
+        } catch(error) {
+            console.log(error)
+        } finally {
+            await mongoClient.close();
+        }
+    }
+
+    async readByAlfaNumId(database, collection, objectID) {
+        try {
+            await mongoClient.connect();
+        
+            const userDatabase = mongoClient.db(database);
+        
+            const userCollection = userDatabase.collection(collection);
+        
             const collectionObject = await userCollection.findOne({id: objectID});
         
             return collectionObject
@@ -105,7 +124,7 @@ class ContenedorMongoDB {
         }
     }
 
-    async findByUsername(database, collection, username) {
+    async findByEmail(database, collection, email) {
         try {
             await mongoClient.connect();
 
@@ -113,7 +132,7 @@ class ContenedorMongoDB {
 
             const userCollection = userDatabase.collection(collection);
         
-            const user = await userCollection.findOne({username: username});
+            const user = await userCollection.findOne({email: email});
 
             if (user) {
                 return user
@@ -134,7 +153,7 @@ class ContenedorMongoDB {
         
             const userDatabase = mongoClient.db("ecommerce");
         
-            const userCollection = userDatabase.collection("carritos");
+            const userCollection = userDatabase.collection("carts");
            
             const collectionObject = await userCollection.findOne(conditions);
           
@@ -149,15 +168,15 @@ class ContenedorMongoDB {
 
     // UPDATE
 
-    async updateProductList(cartID, products) {
+    async addOneItemToArray(database, collection, objectId, objectPush) {
         try {
             await mongoClient.connect();
         
-            const userDatabase = mongoClient.db("ecommerce");
+            const userDatabase = mongoClient.db(database);
         
-            const userCollection = userDatabase.collection("carritos");
+            const userCollection = userDatabase.collection(collection);
            
-            const collectionObject = await userCollection.updateOne({id: cartID}, {$set: {products: products}})
+            const collectionObject = await userCollection.updateOne({id: objectId}, {$push: objectPush})
         
             return collectionObject
         
@@ -197,7 +216,26 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.deleteOne(query, query);
+            await userCollection.deleteOne(query);
+    
+        } catch(error) {
+            console.log(error)
+        } finally {
+            await mongoClient.close();
+        }
+
+    }
+
+    async deleteOneItemFromArray(database, collection, objectId, query) {
+        try {
+
+            await mongoClient.connect();
+        
+            const userDatabase = mongoClient.db(database);
+        
+            const userCollection = userDatabase.collection(collection);
+        
+            await userCollection.updateOne({id: objectId}, {$pull: query}, false, true);
     
         } catch(error) {
             console.log(error)

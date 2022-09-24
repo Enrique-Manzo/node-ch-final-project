@@ -16,9 +16,16 @@ export class UsersDAO {
         return user;
     }
 
+    async getByEmail(email) {
+        const user = await database.findByEmail("ecommerce", "users", email)
+
+        return user
+    }
+
     // ADDS
 
     async addUser(user) {
+        
         await database.insertObject("ecommerce", "users", user)
 
         return

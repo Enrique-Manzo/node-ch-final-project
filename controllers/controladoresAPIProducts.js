@@ -1,4 +1,3 @@
-import { fork } from 'child_process';
 import { Product } from "../business/business.js";
 import ProductManager from "../database/data access objects/product-dao.js";
 
@@ -35,10 +34,14 @@ const controladoresAPIProducts = {
 
     postProduct: async (req, res) => {
         
-        const productData = req.body;
+        const productFields = req.body;
         try {
-            console.log(productData)
+            const product = new Product(productFields); // valida que todos los campos sean correctos
+
+            const productData = product.data(); // extrae los datos del objecto
+
             const result = await ProductManager.addProduct(productData);
+
             res.status(200).json(result)
         } catch (err) {
             res.json({"error": err.message})
@@ -47,7 +50,9 @@ const controladoresAPIProducts = {
     },
 
     deleteProduct: async (req, res) => {
+
         const id = parseInt(req.params.id);
+        
         try {
             await ProductManager.deleteById(id)
        

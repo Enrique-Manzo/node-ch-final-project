@@ -5,21 +5,21 @@ export class ProductDAO {
     // GETS
     async getAllProducts () {
 
-        const allProducts = await database.readAll("ecommerce", "productos");
+        const allProducts = await database.readAll("ecommerce", "products");
         
         return allProducts;
     }
 
     async getRandomProduct() {
         
-        const randomProduct = await database.findRandom("ecommerce", "productos");
+        const randomProduct = await database.findRandom("ecommerce", "products");
 
         return randomProduct        
 
     }
 
     async findProductById(productId) {
-        const product = await database.readById("ecommerce", "productos", productId);
+        const product = await database.readById("ecommerce", "products", productId);
 
         return product;
     }
@@ -27,7 +27,7 @@ export class ProductDAO {
     // ADDS
 
     async addProduct(product) {
-        await database.insertObject("ecommerce", "productos", product)
+        await database.insertObject("ecommerce", "products", product)
 
         return
     }
@@ -35,12 +35,12 @@ export class ProductDAO {
     // UPDATE
 
     async updateStock(productId) {
-        database.updateOne("ecommerce", "productos", {id: productId}, {stock: {$subtract: ["stock", 1]}})
+        database.updateOne("ecommerce", "products", {id: productId}, {stock: {$subtract: ["stock", 1]}})
     }
     
     async updateById(productId, data) {
         try {
-            database.updateOne("ecommerce", "productos", {id: productId}, data)
+            database.updateOne("ecommerce", "products", {id: productId}, data)
         } catch (err) {
            return {"error": err.message}
         }
@@ -50,7 +50,7 @@ export class ProductDAO {
     // DELETE
     async deleteById(productId) {
         try {
-            await database.deleteOne("ecommerce", "productos", {id: productId})
+            await database.deleteOne("ecommerce", "products", {id: productId})
         } catch (err) {
             return err
         }

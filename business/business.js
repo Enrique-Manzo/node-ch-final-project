@@ -1,24 +1,38 @@
 import DataAccessObject from "../database/factories/daoFactory.js";
+import { v4 } from "uuid";
+import CartManager from "../database/data access objects/carts-dao.js";
+import OrderManager from "../database/data access objects/orders-dao.js";
+import nodemailer from 'nodemailer';
 
 class Product {
-    #itemId
+    #name
+    #description
     #price
-    #stock
+    #image
 
-    constructor({itemId, price, stock}) {
-        this.itemId = itemId,
+    constructor({name, description, price, image}) {
+        this.id = v4(),
+        this.name = name,
+        this.description = description,
         this.price = price,
-        this.stock = stock
+        this.image = image
     }
 
-    set itemId(value) {
-        if (!value) throw new Error('You must specify an Item ID');
-        if (typeof value !== 'int') throw new Error('The Item ID must be a string');
-
-        this.#itemId = value
+    set name(value) {
+        if (!value) throw new Error('Name is a required field')
+        if (typeof value !== 'string') throw new Error('The name must be a string');
+        this.#name = value
     }
 
-    get itemId() {return this.#itemId}
+    get name() { return this.#name }
+
+    set description(value) {
+        if (!value) throw new Error('Description is a required field')
+        if (typeof value !== 'string') throw new Error('The description must be a string');
+        this.#description = value
+    }
+
+    get description() { return this.#description }
 
     set price(value) {
         if (!value) throw new Error('Price is a required field')
@@ -29,146 +43,258 @@ class Product {
 
     get price() { return this.#price }
 
-    set stock(value) {
-        if (!value) throw new Error('Stock is a required field')
-        if (isNaN(value)) throw new Error('Stock must be a number')
-        if (value <= 0) throw new Error('Stock must be higher than 0')
-        this.#stock = value
+    set image(value) {
+        if (!value) throw new Error('Image is a required field')
+        if (typeof value !== 'string') throw new Error('The image must be a string');
+        this.#image = value
     }
 
-    get stock() { return this.#stock }
+    get image() { return this.#image }
+
+    data() {
+        return {
+            id: this.id,
+            name: this.#name,
+            description: this.#description,
+            price: this.#price,
+            image: this.#image,
+        }
+    }
+
+}
+
+class Cart {
+
+    constructor(id) {
+        this.id = id
+        this.products = []
+    }
+
+    async addProductToCart(userId, product) {
+      
+        if (!product) {
+            throw new Error({"message": "You must provide a product to add"})
+        }
+
+        const cart = await CartManager.findCartById(userId);
+        
+        if (!cart) {
+            try {
+                const newCart = new Cart(userId)
+
+                product.amount = 1
+
+                newCart.products.push(product)
+    
+                await CartManager.postNewCart(newCart)
+    
+                return {"success": "Product successfully added to cart"}
+            } catch(err) {
+                return {"error": err.message}
+            }
+            
+        }
+
+        const productExists = await CartManager.findProductById(userId, product.id)
+       
+        if (!productExists) {
+            try {
+                product.amount = 1;
+                await CartManager.updateCartProductList(userId, product)
+                
+                return {"success": "Product successfully added to cart"}
+            } catch(err) {
+                return {"error": err.message}
+            }
+        }
+
+        try {
+            await CartManager.increaseProductAmount(userId, product.id)
+            return {"success": "Another product of the same type successfully added to cart"}
+        } catch(err) {
+            return {"error": err.message}
+        }
+        
+    }
+}
+
+class Order {
+
+    #clientId
+    #products
+
+    constructor(clientId, cart) {
+        this.id = v4(),
+        this.date = new Date().toLocaleString(),
+        this.clientId = clientId,
+        this.products = cart.products
+    }
+
+    async submitOrder(order) {
+
+        try {
+            await OrderManager.insertNewOrder(Object.assign({}, order));
+
+            await CartManager.deleteAllProductsFromCart(this.clientId);
+
+            return {"success": "A new order has been posted"}
+
+        } catch(err) {
+            return {"error": err.message}
+        }    
+    }
+
+    async notifyUserAndAdmin() {
+        try {
+            // Generate test SMTP service account from ethereal.email
+            // Only needed if you don't have a real mail account for testing
+            const testAccount = await nodemailer.createTestAccount();
+
+            // create reusable transporter object using the default SMTP transport
+            const transporter = nodemailer.createTransport({
+                host: "smtp.ethereal.email",
+                port: 587,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                user: testAccount.user, // generated ethereal user
+                pass: testAccount.pass, // generated ethereal password
+                },
+            });
+            console.log(testAccount.user)
+            // send mail with defined transport object
+            const info = await transporter.sendMail({
+                from: '"Fred Foo 👻" <foo@example.com>', // sender address
+                to: "enq.manzo@gmail.com", // list of receivers
+                subject: "Hello ✔", // Subject line
+                text: "Hello world?", // plain text body
+                html: "<b>Hello world?</b>", // html body
+            });
+
+            console.log(info)
+        } catch(err) {
+
+        }
+    }
+
+    set products(value) {
+        if (!value) throw new Error('A cart is required')
+        if (value.length <= 0) throw new Error('There must be at least one product in the cart')
+        this.#products = value
+    }
+
+    get products() { return this.#products }
+
+    set clientId(value) {
+        if (!value) throw new Error('A client ID is required')
+        this.#clientId = value
+    }
+
+    get clientId() { return this.#clientId }
 
     data() {
         return Object.freeze({
-            itemId: this.#itemId,
-            price: this.#price,
-            stock: this.#stock,
+            id: this.id,
+            date: this.date,
+            clientId: this.#clientId,
+            products: this.#products
         })
     }
 
 }
 
-const Cart = {
+class User {
 
-    async createNewCart(userId) {
-        // verifies whether there is a cart open already.
-        // Returns new Cart object.
-        const cartManager = new DataAccessObject("cart");
+    #email
+    #password
+    #name
+    #lastName
+    #phone
+    #image
 
-        const cart = await CartManager.findActiveCartsByUserId(userId);
+    constructor({email, password, name, lastName, phone, image}) {
+        this.id = v4(),
+        this.email = email,
+        this.password = password,
+        this.name = name,
+        this.lastName = lastName,
+        this.phone = phone,
+        this.image = image
+    }
 
-        if (!cart) {
-            const newCart = {
-                id: Math.random().toString(36).substring(2, 9),
-                owner_id: userId.toString(),
-                date: new Date(),
-                products: [],
-                status:"open"
-            }
+    set email(value) {
+        if (!value) throw new Error('You must specify an email address');
+        if (typeof value !== 'string') throw new Error('The email address must be a string');
+        if (!value.includes('@')) throw new Error('Invalid email address format')
 
-            await CartManager.postNewCartToUser(newCart)
+        this.#email = value
+    }
 
-            return newCart;
-        } else {
-            throw new Error({"message": "This user already has an open cart"})
+    get email() {return this.#email}
+
+    set password(value) {
+        if (!value) throw new Error('You must specify a password');
+        if (typeof value !== 'string') throw new Error('The password must be a string');
+
+        this.#password = value
+    }
+
+    get password() {return this.#password}
+
+    set name(value) {
+        if (!value) throw new Error('You must specify your last name');
+        if (typeof value !== 'string') throw new Error('Your name address must be a string');
+        if (/\d/.test(value)) throw new Error('Invalid name format') // checks whether the name contains a number
+
+        this.#name = value
+    }
+
+    get name() {return this.#name}
+
+    set lastName(value) {
+        if (!value) throw new Error('You must specify your last name');
+        if (typeof value !== 'string') throw new Error('Your last name address must be a string');
+        if (/\d/.test(value)) throw new Error('Invalid last name format') // checks whether the last name contains a number
+
+        this.#lastName = value
+    }
+
+    get lastName() {return this.#lastName}
+
+    set phone(value) {
+        if (!value) throw new Error('You must specify a phone number');
+        if (typeof value !== 'string') throw new Error('Your phone number must be a string');
+        if (/[a-zA-Z]/.test(value)) throw new Error('Invalid phone number format') // checks whether the phone number contains a letter
+
+        this.#phone = value
+    }
+
+    get phone() {return this.#phone}
+
+    set image(value) {
+        if (!value) throw new Error('You must specify an image url');
+        if (typeof value !== 'string') throw new Error('Your image url must be a string');
+
+        this.#image = value
+    }
+
+    get image() {return this.#image}
+
+    data() {
+        return {
+            id: this.id,
+            email: this.#email,
+            password: this.#password,
+            name: this.#name,
+            lastName: this.#lastName,
+            phone: this.#phone,
+            image: this.#image
         }
-        
-    },
-
-    async addProductToCart(userId, product) {
-       
-        // verifies that the product hasn't been added before, if it has, it increases the amount.
-        // Returns product in cart-like format
-
-        if (!product) {
-            throw new Error({"message": "no product was passed to this function"})
-        }
-
-        const cartManager = new DataAccessObject("cart");
-        const cart = await CartManager.findActiveCartsByUserId(userId);
-
-        const invoiceableProduct = {};
-
-        invoiceableProduct.id = product.id;
-        invoiceableProduct.name = product.name;
-        invoiceableProduct.price = product.price;
-        invoiceableProduct.image = product.image;
-        invoiceableProduct.amount = 1;
-        
-        if (cart) {
-            if (cart.products.length > 0) {
-                for (let cartProduct of cart.products) {
-                    if (cartProduct.id == invoiceableProduct.id) {
-                        cartProduct.amount++
-                    }
-                }
-
-                if (!cart.products.some((e)=> { return e.id == invoiceableProduct.id})) {
-                    cart.products.push(invoiceableProduct)
-                }
-
-            } else {
-                    cart.products.push(invoiceableProduct)
-                }
-
-            await CartManager.updateCartProductList(cart.id, cart.products);
-
-        } else {
-            this.createNewCart(userId)
-            this.addProductToCart(userId, invoiceableProduct)
-        }
-    }
-}
-
-class Sale {
-
-    #cart
-
-    constructor({cart}) {
-        this.cart = cart
     }
 
-    getSaleData() {
-        // returns sale-specific data
-
-        const sale = {};
-
-        sale.products = this.#cart.products;
-
-        for (product of this.#cart.products) {
-            sale.totalAmount =+ cart.amount;
-        }
-
-        sale.date = new Date().toLocaleDateString;
-        
-
-        return sale;
-    }
-
-    async postSale(dtoSale) {
-        const saleManager = new DataAccessObject("sale");
-
-        await saleManager.postSale(dtoSale)
-
-        return dtoSale
-    }
-
-    async updateStock(productId) {
-        // connects to db to update the stock in the specified amount
-        await ProductManager.updateStock(productId)
-
-    }
-
-    set cart(value) {
-        if (!value) throw new Error('A cart is required')
-        if (value.length <= 0) throw new Error('There must be at least one cart in a sale')
-        this.#cart = value
-    }
-
-    get cart() { return this.#cart }
 
 }
 
 export {Product};
-export default Cart;
-export {Sale};
+export {Cart};
+export {Order};
+export {User};
