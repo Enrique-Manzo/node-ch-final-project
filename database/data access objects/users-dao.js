@@ -11,7 +11,7 @@ export class UsersDAO {
     }
 
     async findUserById(userId) {
-        const user = await database.readById("ecommerce", "users", userId);
+        const user = await database.readByAlfaNumId("ecommerce", "users", userId);
 
         return user;
     }

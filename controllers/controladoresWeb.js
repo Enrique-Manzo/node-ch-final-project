@@ -7,7 +7,7 @@ const controladoresWeb = {
         res.status(200)
     },
     chat: (req, res) => {
-        res.status(200)
+        res.render("chat", {layout: "index"})
     }
 }
 

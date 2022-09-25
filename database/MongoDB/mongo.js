@@ -11,7 +11,7 @@ const args = parseArgs(process.argv.slice(2))
 
 const mongoClientFunction = () => {
     if (args.PERSISTENCE === 'local') {
-        const connectionURL = 'mongodb://127.0.0.1:27017'; // local
+        const connectionURL = args.mongoLocal || 'mongodb://127.0.0.1:27017'; // local
         const client = new MongoClient(connectionURL);
         return client
     } else if (args.PERSISTENCE === 'production') {

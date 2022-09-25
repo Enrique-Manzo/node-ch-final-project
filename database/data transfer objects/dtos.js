@@ -69,10 +69,8 @@ class CartDTO {
 
 class MessageDTO {
     constructor(object) {
-        this.id = object.id
-        this.author_id = object.author.id
-        this.author_name = object.author.name
-        this.avatar = object.author.avatar
+        this.email = object.email
+        this.date = object.date
         this.text = object.text
     }
 }

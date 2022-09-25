@@ -1,90 +1,16 @@
 <span class="sub_page">
-{{> header}}
-
   <!-- contact section -->
-  <section class="mb-5 d-flex justify-content-center">
-    <div class="chat_wrapper">
-      <div class="chat_fields">
-        <form class="contact_section chat_credentials">
-          <label for="email">Email address</label>
-          <input type="email" name="email" id="user_email">
-          <label for="name">Name</label>
-          <input type="text" name="name" id="user_name">
-          <label for="surname">Surname</label>
-          <input type="text" name="surname" id="user_surname">
-          <label for="age">Age</label>
-          <input type="text" name="age" id="user_age">
-          <label for="alias">Nickname</label>
-          <input type="text" name="nick" id="user_nickname">
-          <label for="avatar">Avatar</label>
-          <input type="text" name="avatar" id="user_avatar">
-          <label for="message">Message</label>
-          <input type="text" name="message" id="user_message"> 
-          <button type="button" id="btn_send">SEND</button>
-        </form>
-      </div>
-      <div>
-        <h1>Client chat</h1>
-        <h3>Exchange a few words with other clients</h3>
-        <div id="chat_messages_wrapper">
-          <ul id="messages_list">
-
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
   <section>
       <div class="container p-0">
 
       <h1 class="h3 mb-3">Messages</h1>
 
       <div class="card">
-        <div class="row g-0">
-          <div class="col-12 col-lg-5 col-xl-3 border-right">
-
-            <div class="px-4 d-none d-md-block">
-              <div class="d-flex align-items-center">
-                <div class="flex-grow-1">
-                  <div class="small mb-0">Search channels</div>
-                  <input type="text" class="form-control my-3" placeholder="Search...">
-                </div>
-              </div>
-            </div>
-
-            <a href="#" class="list-group-item list-group-item-action border-0">
-              <div class="d-flex align-items-start">
-                <img src="https://cdn-icons-png.flaticon.com/512/615/615075.png" class="mr-1" alt="Vanessa Tucker" width="40" height="40">
-                <div class="ml-3">
-                  Community
-                </div>
-              </div>
-            </a>
-
-            <a href="#" class="list-group-item list-group-item-action border-0">
-              <div class="d-flex align-items-start">
-                <img src="https://cdn-icons-png.flaticon.com/512/1374/1374123.png" class="mr-1" alt="Vanessa Tucker" width="40" height="40">
-                <div class="ml-3">
-                  Sales
-                </div>
-              </div>
-            </a>
-
-            <a href="#" class="list-group-item list-group-item-action border-0">
-              <div class="d-flex align-items-start">
-                <img src="https://cdn-icons-png.flaticon.com/512/2983/2983803.png" class="mr-1" alt="Vanessa Tucker" width="40" height="40">
-                <div class="ml-3">
-                  News
-                </div>
-              </div>
-            </a>
-            
-
-            <hr class="d-block d-lg-none mt-1 mb-0">
-          </div>
+        <div class="row g-0 d-flex flex-row justify-content-center">
+          
           <div class="col-12 col-lg-7 col-xl-9">
             <div class="position-relative">
-              <div class="chat-messages p-4" id="chat_messages_new">
+              <div class="chat-messages p-4" id="chat_messages_new" style="height: 400px; width: 100%; overflow: scroll;">
 
                 <div class="chat-message-right pb-4">
                   
@@ -98,9 +24,10 @@
             </div>
 
             <div class="flex-grow-0 py-3 px-4 border-top">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Type your message">
-                <button class="btn btn-primary">Send</button>
+              <div class="input-group d-flex flex-column">
+                <input type="text" class="form-control w-25" placeholder="Email address" id="socket-email">
+                <input type="text" class="form-control w-50 mt-2 mb-2" placeholder="Type your message" id="socket-input">
+                <button class="btn btn-primary w-25" id="socket-send">Send</button>
               </div>
             </div>
 
@@ -112,6 +39,6 @@
   </section>
 
   <!-- end contact section -->
-{{> footer}}
-{{> scripts}}
 </span>
+
+{{> scripts}}

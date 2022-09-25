@@ -105,6 +105,26 @@ class ContenedorMongoDB {
         }
     }
 
+    async readByProperty(database, collection, query) {
+        try {
+            await mongoClient.connect();
+        
+            const userDatabase = mongoClient.db(database);
+        
+            const userCollection = userDatabase.collection(collection);
+        
+            const collectionObjects = await userCollection.find(query).toArray();
+            
+            return collectionObjects
+        
+        } catch(error) {
+            console.log(error)
+        } finally {
+            await mongoClient.close();
+        }
+    }
+
+
     async findRandom(database, collection) {
         try {
             await mongoClient.connect();

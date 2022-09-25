@@ -2,6 +2,7 @@ import DataAccessObject from "../database/factories/daoFactory.js";
 import { v4 } from "uuid";
 import CartManager from "../database/data access objects/carts-dao.js";
 import OrderManager from "../database/data access objects/orders-dao.js";
+import UserManager from "../database/data access objects/users-dao.js";
 import nodemailer from 'nodemailer';
 
 class Product {
@@ -144,35 +145,66 @@ class Order {
         }    
     }
 
-    async notifyUserAndAdmin() {
+    async notifyUserAndAdmin(order) {
+
         try {
-            // Generate test SMTP service account from ethereal.email
-            // Only needed if you don't have a real mail account for testing
-            const testAccount = await nodemailer.createTestAccount();
+
+            const user = await UserManager.findUserById(order.clientId)
 
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-                host: "smtp.ethereal.email",
+                host: 'smtp-relay.sendinblue.com',
                 port: 587,
-                secure: false, // true for 465, false for other ports
                 auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
-                },
+                    user: 'enq.manzo@gmail.com',
+                    pass: process.env.EMAIL_SENDINBLUE_PASS
+                }
             });
-            console.log(testAccount.user)
-            // send mail with defined transport object
-            const info = await transporter.sendMail({
-                from: '"Fred Foo 👻" <foo@example.com>', // sender address
+
+            const plainText = 
+            `
+            A new purchase order with the following information has been placed\n
+            \n
+            Date: ${order.date}
+            Products:\n
+            ${order.products.map(product => `${product.name} | $${product.price} | Amount: ${product.amount}\n`)}
+            \n
+            User: ${user.name} ${user.lastName}, ${user.email}
+            `
+           
+            const HTMLText =
+            `
+            <h1>A new purchase order with the following information has been placed</h1>
+            
+            <p>Date: ${order.date}</p>
+            <p>Products:</p>
+            <ul>
+            ${order.products.map(product => `<li>${product.name} | $${product.price} | Amount: ${product.amount}</li>`)}
+            </ul>
+            <p>User: ${user.name} ${user.lastName}, ${user.email}</p>
+            `
+
+            // envía el mail al admin con el detalle de la compra
+            await transporter.sendMail({
+                from: '"System admin" <enq.manzo@gmail.com>', // sender address
                 to: "enq.manzo@gmail.com", // list of receivers
-                subject: "Hello ✔", // Subject line
-                text: "Hello world?", // plain text body
-                html: "<b>Hello world?</b>", // html body
+                subject: "New purchase order placed", // Subject line
+                text: plainText, // plain text body
+                html: HTMLText, // html body
             });
 
-            console.log(info)
-        } catch(err) {
+            // envía el mail al usuario con el detalle de la compra
+            await transporter.sendMail({
+                from: '"New purchase order placed" <enq.manzo@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: "New purchase order placed", // Subject line
+                text: plainText, // plain text body
+                html: HTMLText, // html body
+            });
 
+
+        } catch(err) {
+            return {"error": err.message}
         }
     }
 

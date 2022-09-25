@@ -1,5 +1,5 @@
 import { Order } from "../business/business.js";
-import DataAccessObject from "../database/factories/daoFactory.js";
+import OrderManager from "../database/data access objects/orders-dao.js";
 import CartManager from "../database/data access objects/carts-dao.js";
 
 const controladoresAPIOrders = {
@@ -7,7 +7,17 @@ const controladoresAPIOrders = {
     // GET
 
     getOrders: async (req, res) => {
-        res.status(200).json({"message": "here's your order"})
+        const clientId = req.userData.user.id;
+
+        try {
+            const orders = await OrderManager.getAllOrdersByClientId(clientId)
+
+            res.status(200).json({"client orders": orders})
+
+        } catch(err) {
+            res.json({"error": err.message})
+        }
+
     },
 
     // POST
@@ -23,7 +33,7 @@ const controladoresAPIOrders = {
             
             await order.submitOrder(order.data())
 
-            order.notifyUserAndAdmin()
+            order.notifyUserAndAdmin(order.data())
 
             res.status(200).json({"success": "Order created successfully"})
 

@@ -3,10 +3,8 @@ import { Server as SocketServer } from "socket.io";
 import routerWeb from "./routers/routerWeb.js";
 import routerAPI from "./routers/routerAPI.js";
 import {engine} from "express-handlebars";
-import { getMessages, addMessage } from "./database/messages.js";
-import { getWatches, addWatch } from "./database/watches.js";
+import MessageManager from "./database/data access objects/messages-dao.js";
 import {Server as HttpServer} from "http";
-import MongoStore from "connect-mongo";
 import cors from "cors";
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
@@ -39,36 +37,21 @@ io.on("connection", (socket)=> {
     console.log("Socket connected");
     
     socket.on("requestMessages", ()=>{
-        getMessages()
-        .then((messages)=>{
-            socket.emit("conexionOK", {messages: messages})
-        })
+        MessageManager.getAllmessages()
+        .then(
+            (messages)=>{
+                socket.emit("conexionOK", {messages: messages});
+            }
+        )
+        
     })
     
     socket.on("message", async (message)=>{
-        await addMessage(message)
-        getMessages()
+        await MessageManager.addMessage(message)
+        MessageManager.getAllmessages()
         .then((messages)=>{
             io.sockets.emit("conexionOK", { messages: messages })
         })
-    })
-    
-    socket.on("pushWatchAndRetrieve", async (data)=>{
-        
-        await addWatch(data);
-        getWatches()
-        .then((watches)=>{
-            socket.emit("watchesData", {watches: watches})
-        })
-    })
-
-    socket.on("retrieveWatches", ()=>{
-        
-        getWatches()
-        .then((watches)=>{
-            socket.emit("watchesData", {watches: watches})
-        })
-
     })
     
 })
@@ -103,7 +86,7 @@ app.use("/info", compression(), (req, res)=> {
 
 app.all('*', (req, res) => {
     const { url, method } = req
-    res.send(`Ruta ${method} ${url} no está implementada`)
+    res.send(`Route ${method} ${url} is not yet or no longer implemented`)
   })
 
 // CLI COMMAND VARIABLES

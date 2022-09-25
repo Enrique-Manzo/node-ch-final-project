@@ -1,12 +1,22 @@
 import database from "../contenedores/contenedorMongoDB.js";
-import { Order } from "../../business/business.js";
 
 export class OrderDAO {
+
+    // READ
+
+    async getAllOrdersByClientId(clientId) {
+        try {
+            const orders = await database.readByProperty("ecommerce", "orders", {clientId: clientId})
+
+            return orders
+        } catch(err) {
+            return {"error": err.message}
+        }
+    }
 
     // WRITE
     async insertNewOrder(newOrder) {
         try {
-            console.log(newOrder)
             await database.insertObject("ecommerce", "orders", newOrder)
 
         } catch(err) {

@@ -8,15 +8,7 @@ export class messagesDAO {
 
         const allMessages = await database.readAll("ecommerce", "messages");
 
-        const dtoMessages = []
-
-        for (let message of allMessages) {
-            dtoMessage = new DataTransferObject("message", message)
-
-            dtoMessages.push(dtoMessage)
-        }
-
-        return dtoMessages;
+        return allMessages;
     }
 
     async findMessageById(messageId) {
@@ -40,6 +32,6 @@ export class messagesDAO {
 
 }
 
-const MessageManager = new MessageDAO();
+const MessageManager = new messagesDAO();
 
 export default MessageManager;
