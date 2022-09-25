@@ -61,6 +61,7 @@ app.use(express.static(publicPath));
 app.use(express.json()); // checks whether there's a json object in the req body
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.set('views', path.join(__dirname, 'views'));
 app.engine("handlebars", engine({
     defaultLayout: 'index',
     layoutsDir: path.join(__dirname, 'views', 'layouts'),
