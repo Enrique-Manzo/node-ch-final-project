@@ -99,6 +99,7 @@ app.all('*', (req, res) => {
 const args = parseArgs(process.argv.slice(2), {
     default: {
         PORT: 8080,
+        PERSISTENCE: "production"
     }
 })
 
