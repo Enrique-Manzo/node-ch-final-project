@@ -42,7 +42,7 @@ const controladoresAPIProducts = {
 
             const result = await ProductManager.addProduct(productData);
 
-            res.status(200).json({"success": "product added successfully", "result": result})
+            res.status(200).json({"success": "product added successfully", "productID": product.id})
         } catch (err) {
             res.json({"error": err.message})
         }
@@ -63,7 +63,7 @@ const controladoresAPIProducts = {
     },
     
     updateProduct: async (req, res) => {
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         const data = req.body;
 
         try {
