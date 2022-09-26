@@ -1,10 +1,19 @@
-import ProductManager from "../database/data access objects/product-dao.js";
-import CartManager from "../database/data access objects/carts-dao.js";
-import database from "../database/contenedores/contenedorMongoDB.js";
+import os from 'os';
 
 const controladoresWeb = {
     serverInfo: (req, res) => {
-        res.status(200)
+        const info = {
+            arguments: process.argv,
+            operatingSystem: process.platform,
+            nodeVersion: process.version,
+            reservedMemory: process.memoryUsage(),
+            executionPath: process.execPath,
+            processID: process.pid,
+            projectFolder: process.cwd(),
+            numberOfProcessors: os.cpus().length
+        }
+
+        res.render("serverInfo", {layout: "index", info: info})
     },
     chat: (req, res) => {
         res.render("chat", {layout: "index"})

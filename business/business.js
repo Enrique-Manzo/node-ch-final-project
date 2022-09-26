@@ -38,7 +38,7 @@ class Product {
     set price(value) {
         if (!value) throw new Error('Price is a required field')
         if (isNaN(value)) throw new Error('Price must be a number')
-        if (valor <= 0) throw new Error('Price must be higher than 0')
+        if (value <= 0) throw new Error('Price must be higher than 0')
         this.#price = value
     }
 

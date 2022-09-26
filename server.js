@@ -8,8 +8,6 @@ import {Server as HttpServer} from "http";
 import cors from "cors";
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
-import os from 'os';
-import compression from "compression";
 
 // PATHS
 import * as path from 'path'; //const path = require('path');
@@ -73,21 +71,6 @@ app.use('/usercontent/', express.static('./uploads/')); // public path for image
 // ROUTES
 app.use("/", routerWeb); // handles static files
 app.use("/api", routerAPI); // handles api calls
-app.use("/info", compression(), (req, res)=> {
-    
-    const info = {
-        arguments: process.argv,
-        operatingSystem: process.platform,
-        nodeVersion: process.version,
-        reservedMemory: process.memoryUsage(),
-        executionPath: process.execPath,
-        processID: process.pid,
-        projectFolder: process.cwd(),
-        numberOfProcessors: os.cpus().length
-    }
-     
-    res.json(info)
-})
 
 app.all('*', (req, res) => {
     const { url, method } = req

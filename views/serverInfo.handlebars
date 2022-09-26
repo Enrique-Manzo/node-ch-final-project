@@ -1,0 +1,36 @@
+<span class="sub_page">
+  <!-- contact section -->
+  <section>
+      <div>
+        <ul>
+            <li>
+                arguments:
+                <ul>
+                    {{#each info.arguments}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </li>
+            <li>operating system: {{info.operatingSystem}}</li>
+            <li>node version: {{info.nodeVersion}}</li>
+            <li>
+                reserved memory: 
+                <ul>
+                    <li>rss: {{info.reservedMemory.rss}}</li>
+                    <li>heap total: {{info.reservedMemory.heapTotal}}</li>
+                    <li>heap used: {{info.reservedMemory.heapUsed}}</li>
+                    <li>external: {{info.reservedMemory.external}}</li>
+                    <li>array buffers: {{info.reservedMemory.arrayBuffers}}</li>
+                </ul> 
+            </li>
+            <li>execution path: {{info.executionPath}}</li>
+            <li>process ID: {{info.processID}}</li>
+            <li>project folder: {{info.projectFolder}}</li>
+            <li>number of processors: {{info.numberOfProcessors}}</li>
+        </ul>
+      </div>
+  </section>
+
+  <!-- end contact section -->
+</span>
+{{> scripts}}
