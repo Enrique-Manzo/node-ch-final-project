@@ -42,7 +42,7 @@ const controladoresAPIProducts = {
 
             const result = await ProductManager.addProduct(productData);
 
-            res.status(200).json(result)
+            res.status(200).json({"success": "product added successfully", "result": result})
         } catch (err) {
             res.json({"error": err.message})
         }
