@@ -51,7 +51,7 @@ const controladoresAPIProducts = {
 
     deleteProduct: async (req, res) => {
 
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         
         try {
             await ProductManager.deleteById(id)
