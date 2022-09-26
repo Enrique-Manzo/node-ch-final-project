@@ -216,7 +216,7 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.updateOne(query, newValues);
+            await userCollection.updateOne(query, {$set: newValues});
         
         } catch(error) {
             console.log(error)
