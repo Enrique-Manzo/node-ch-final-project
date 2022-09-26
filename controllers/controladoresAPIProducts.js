@@ -21,10 +21,10 @@ const controladoresAPIProducts = {
 
     getProductById: async (req, res) => {
         
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         
         const product = await ProductManager.findProductById(id);
-        
+
         if (!product) {
             res.status(404).json({"message": "item not found"})
         } else {
