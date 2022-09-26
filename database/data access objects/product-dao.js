@@ -19,7 +19,7 @@ export class ProductDAO {
     }
 
     async findProductById(productId) {
-        const product = await database.readById("ecommerce", "products", productId);
+        const product = await database.readByAlfaNumId("ecommerce", "products", productId);
 
         return product;
     }
