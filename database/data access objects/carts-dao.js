@@ -66,7 +66,7 @@ export class CartDAO {
 
     async deteleProductFromCart(cartId, productId) {
         try {
-            await database.deleteOneItemFromArray("ecommerce", "carts", cartId, {products: {id: parseInt(productId)}})
+            await database.deleteOneItemFromArray("ecommerce", "carts", cartId, {products: {id: productId}})
             return {"success": "Product removed from cart"}
         } catch(err) {
             return {"error": err.message}
