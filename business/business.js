@@ -171,7 +171,7 @@ class Order {
             \n
             User: ${user.name} ${user.lastName}, ${user.email}
 
-            Total: ${order.products.reduce((accumulator, object) => {
+            Total: $${order.products.reduce((accumulator, object) => {
                 const final = object.amount * parseInt(object.price)
                 return accumulator + final;
               }, 0)}
@@ -188,7 +188,7 @@ class Order {
             </ul>
             <p>User: ${user.name} ${user.lastName}, ${user.email}</p>
 
-            <p><b>Total: ${order.products.reduce((accumulator, object) => {
+            <p><b>Total: $${order.products.reduce((accumulator, object) => {
                 const final = object.amount * parseInt(object.price)
                 return accumulator + final;
               }, 0)}
