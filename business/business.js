@@ -170,6 +170,11 @@ class Order {
             ${order.products.map(product => `${product.name} | $${product.price} | Amount: ${product.amount}\n`)}
             \n
             User: ${user.name} ${user.lastName}, ${user.email}
+
+            Total: ${order.products.reduce((accumulator, object) => {
+                const final = object.amount * parseInt(object.price)
+                return accumulator + final;
+              }, 0)}
             `
            
             const HTMLText =
@@ -182,6 +187,12 @@ class Order {
             ${order.products.map(product => `<li>${product.name} | $${product.price} | Amount: ${product.amount}</li>`)}
             </ul>
             <p>User: ${user.name} ${user.lastName}, ${user.email}</p>
+
+            <p><b>Total: ${order.products.reduce((accumulator, object) => {
+                const final = object.amount * parseInt(object.price)
+                return accumulator + final;
+              }, 0)}
+            </p></b>
             `
 
             // envía el mail al admin con el detalle de la compra
