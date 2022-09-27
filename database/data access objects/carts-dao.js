@@ -53,9 +53,9 @@ export class CartDAO {
         
     }
 
-    increaseProductAmount(cartId, productId) {
+    increaseProductAmount(cartId, productID) {
         try {
-            database.updateOne("ecommerce", "carts", {id: cartId, "products.id": productId}, {$inc: {"products.$.amount": 1}})
+            database.updateOneValue("ecommerce", "carts", {id: cartId, "products.id": productID}, {$inc: {"products.$.amount": 1}})
             return {"success": "Product amount increased by 1"}
         } catch(err) {
             return {"error": err.message}

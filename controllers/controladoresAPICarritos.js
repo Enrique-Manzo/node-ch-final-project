@@ -11,6 +11,10 @@ const controladoresAPICarrito = {
 
             const userCart = await CartManager.findCartById(userId)
 
+            if (!userCart) {
+                res.status(404).json({"message": "You haven't added any products to your cart yet."})
+            }
+
             res.status(200).json({"cart": userCart})
 
         } catch(err) {

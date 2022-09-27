@@ -225,6 +225,25 @@ class ContenedorMongoDB {
         }
     }
 
+    async updateOneValue(database, collection, query, newValues) {
+        try {
+            await mongoClient.connect();
+        
+            const userDatabase = mongoClient.db(database);
+        
+            const userCollection = userDatabase.collection(collection);
+        
+            await userCollection.findOneAndUpdate(query, newValues);
+        
+        } catch(error) {
+            console.log(error)
+        } finally {
+            await mongoClient.close();
+        }
+    }
+
+
+
     // DELETE
 
     async deleteOne(database, collection, query) {
