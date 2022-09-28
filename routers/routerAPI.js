@@ -13,6 +13,7 @@ import * as path from 'path';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log(process.cwd())
         cb(null, path.resolve(process.cwd(), 'public/images'))
     },
     filename: function (req, file, cb) {
