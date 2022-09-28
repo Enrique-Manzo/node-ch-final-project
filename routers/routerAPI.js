@@ -12,7 +12,7 @@ import controladoresAPIOrders from "../controllers/controladoresAPIOrders.js";
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/images')
+        cb(null, '../public/images')
     },
     filename: function (req, file, cb) {
         const finalName = `${v4()}-image-${file.originalname.replaceAll(" ", "")}`
