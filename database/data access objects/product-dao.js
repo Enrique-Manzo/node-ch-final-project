@@ -27,9 +27,14 @@ export class ProductDAO {
     // ADDS
 
     async addProduct(product) {
-        await database.insertObject("ecommerce", "products", product)
-
-        return
+        const response = await database.insertObject("ecommerce", "products", product)
+        
+        if (response.insertedId) {
+            return {"success": "Inserted", "code": 1}
+        } else {
+            return {"error": "Not inserted", "code": 0}
+        }
+        
     }
 
     // UPDATE
@@ -40,7 +45,9 @@ export class ProductDAO {
     
     async updateById(productId, data) {
         try {
-            database.updateOne("ecommerce", "products", {id: productId}, data)
+            const response = await database.updateOne("ecommerce", "products", {id: productId}, data)
+
+            return response
         } catch (err) {
            return {"error": err.message}
         }
@@ -50,7 +57,8 @@ export class ProductDAO {
     // DELETE
     async deleteById(productId) {
         try {
-            await database.deleteOne("ecommerce", "products", {id: productId})
+            const response = await database.deleteOne("ecommerce", "products", {id: productId})
+            return response
         } catch (err) {
             return err
         }

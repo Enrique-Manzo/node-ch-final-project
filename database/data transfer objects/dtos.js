@@ -16,12 +16,23 @@ export default class DataTransferObject {
             this.dto = new ChatDTO(this.dataObject)
         } else if (this.type === "cart") {
             this.dto = new CartDTO(this.dataObject)
+        } else if (this.type === "order") {
+            this.dto = new OrderDTO(this.dataObject)
         }
 
         this.dto.id = this.dataObject.id
 
     }
 
+}
+
+class OrderDTO {
+    constructor(object) {
+        this.id = object.id
+        this.date = object.date
+        this.clientId = object.clientId
+        this.products = object.products
+    }
 }
 
 class UserDTO {
@@ -49,10 +60,7 @@ class ProductDTO {
         this.id = object.id
         this.name = object.name
         this.price = object.price
-        this.tag = object.tag
         this.image = object.image
-        this.featured = object.featured
-        this.stock = object.stock
         this.description = object.description
     }
 }
@@ -60,10 +68,7 @@ class ProductDTO {
 class CartDTO {
     constructor(object) {
         this.id = object.id
-        this.owner_id = object.owner_id
-        this.date = object.date
         this.products = object.products
-        this.status = object.status
     }
 }
 
@@ -72,14 +77,5 @@ class MessageDTO {
         this.email = object.email
         this.date = object.date
         this.text = object.text
-    }
-}
-
-class ChatDTO {
-    constructor(object) {
-        this.id = object.id
-        this.messages_ids = object.messages_ids
-        this.participants = object.participants
-        this.date = object.timeStamp
     }
 }

@@ -1,4 +1,4 @@
-import DataAccessObject from "../database/factories/daoFactory.js";
+import DataTransferObject from "../database/data transfer objects/dtos.js";
 import { v4 } from "uuid";
 import CartManager from "../database/data access objects/carts-dao.js";
 import OrderManager from "../database/data access objects/orders-dao.js";
@@ -74,7 +74,7 @@ class Cart {
     async addProductToCart(userId, product) {
       
         if (!product) {
-            throw new Error({"message": "You must provide a product to add"})
+            throw new Error("You must provide a product to add")
         }
 
         const cart = await CartManager.findCartById(userId);
@@ -83,10 +83,12 @@ class Cart {
             try {
                 const newCart = new Cart(userId)
 
-                product.amount = 1
+                const productDTO = new DataTransferObject("product", product)
 
-                newCart.products.push(product)
-    
+                productDTO.dto.amount = 1
+
+                newCart.products.push(productDTO.dto)
+
                 await CartManager.postNewCart(newCart)
     
                 return {"success": "Product successfully added to cart"}
@@ -100,8 +102,9 @@ class Cart {
        
         if (!productExists) {
             try {
-                product.amount = 1;
-                await CartManager.updateCartProductList(userId, product)
+                const productDTO = new DataTransferObject("product", product)
+                productDTO.dto.amount = 1;
+                await CartManager.updateCartProductList(userId, productDTO.dto)
                 
                 return {"success": "Product successfully added to cart"}
             } catch(err) {
@@ -221,7 +224,7 @@ class Order {
 
     set products(value) {
         if (!value) throw new Error('A cart is required')
-        if (value.length <= 0) throw new Error('There must be at least one product in the cart')
+        if (value.length <= 0) throw new Error('There must be at least one product in the cart.')
         this.#products = value
     }
 

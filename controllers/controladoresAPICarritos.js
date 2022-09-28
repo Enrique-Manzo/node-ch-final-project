@@ -1,6 +1,7 @@
 import CartManager from "../database/data access objects/carts-dao.js";
 import ProductManager from "../database/data access objects/product-dao.js";
 import { Cart } from "../business/business.js";
+import DataTransferObject from "../database/data transfer objects/dtos.js";
 
 const controladoresAPICarrito = {
 
@@ -13,9 +14,10 @@ const controladoresAPICarrito = {
 
             if (!userCart) {
                 res.status(404).json({"message": "You haven't added any products to your cart yet."})
+            } else {
+                const cartDTO = new DataTransferObject("cart", userCart)
+                res.status(200).json({"cart": cartDTO.dto})
             }
-
-            res.status(200).json({"cart": userCart})
 
         } catch(err) {
             res.json({"error": err.message})
@@ -30,15 +32,19 @@ const controladoresAPICarrito = {
 
         try {
             const product = await ProductManager.findProductById(productId);
-        
-            const cart = new Cart(userId)
+            
+            if (!product) {
+                res.status(400).json({"error": "No product with that ID was found"})
+            } else {
+                const cart = new Cart(userId)
            
-            cart.addProductToCart(userId, product)
-
-            res.json({"message": "success"})
+                await cart.addProductToCart(userId, product)
+         
+                res.status(200).json({"message": "success"})
+            }
             
         } catch(err) {
-            res.json({"error": err.message})
+            res.json({"error": await err.message})
         }
     },
 
@@ -49,10 +55,14 @@ const controladoresAPICarrito = {
         const productId = req.params.id;
 
         try {
-            await CartManager.deteleProductFromCart(userId, productId)
-
-            res.status(200).json({"success": "Product removed"})
-
+            const response = await CartManager.deteleProductFromCart(userId, productId)
+            
+            if (response.code === 0) {
+                res.status(200).json({"error": "No products removed. Please check your parameters."})
+            } else if (response.code === 1) {
+                res.status(200).json({"success": "Product removed"})
+            }
+            
         }catch(error) {
             res.json({"error": err.message})
         }

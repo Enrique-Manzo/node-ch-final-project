@@ -33,9 +33,9 @@ export class CartDAO {
 
     // POST
 
-    postNewCart(newCart) {
+    async postNewCart(newCart) {
         try {
-            database.insertObject("ecommerce", "carts", newCart);
+            await database.insertObject("ecommerce", "carts", newCart);
         } catch(err) {
             return {"error": err.message}
         }        
@@ -43,9 +43,9 @@ export class CartDAO {
 
     // UPDATE
 
-    updateCartProductList(cartID, products) {
+    async updateCartProductList(cartID, products) {
         try {
-            database.addOneItemToArray("ecommerce", "carts", cartID, {products: products})
+            await database.addOneItemToArray("ecommerce", "carts", cartID, {products: products})
             return {"success": "cart product list updated"}
         } catch(err) {
             return {"error": err.message}
@@ -53,9 +53,9 @@ export class CartDAO {
         
     }
 
-    increaseProductAmount(cartId, productID) {
+    async increaseProductAmount(cartId, productID) {
         try {
-            database.updateOneValue("ecommerce", "carts", {id: cartId, "products.id": productID}, {$inc: {"products.$.amount": 1}})
+            await database.updateOneValue("ecommerce", "carts", {id: cartId, "products.id": productID}, {$inc: {"products.$.amount": 1}})
             return {"success": "Product amount increased by 1"}
         } catch(err) {
             return {"error": err.message}
@@ -66,8 +66,14 @@ export class CartDAO {
 
     async deteleProductFromCart(cartId, productId) {
         try {
-            await database.deleteOneItemFromArray("ecommerce", "carts", cartId, {products: {id: productId}})
-            return {"success": "Product removed from cart"}
+            const response = await database.deleteOneItemFromArray("ecommerce", "carts", cartId, {products: {id: productId}})
+            
+            if (response.modifiedCount === 0) {
+                return {"error": "No products have been removed from the cart.", "code": 0}
+            } else if (response.modifiedCount > 0) {
+                return {"success": "A product has been removed from the cart.", "code": 1}
+            }
+            
         } catch(err) {
             return {"error": err.message}
         }

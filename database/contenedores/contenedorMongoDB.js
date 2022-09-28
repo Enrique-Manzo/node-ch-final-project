@@ -12,10 +12,12 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.insertOne(object)
-        
+            const response = await userCollection.insertOne(object)
+            
+            return response
+            
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -32,7 +34,7 @@ class ContenedorMongoDB {
             await userCollection.insertMany(objectArray)
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -60,7 +62,7 @@ class ContenedorMongoDB {
             return collectionObjects
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -80,7 +82,7 @@ class ContenedorMongoDB {
             return collectionObject
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -99,7 +101,7 @@ class ContenedorMongoDB {
             return collectionObject
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -118,7 +120,7 @@ class ContenedorMongoDB {
             return collectionObjects
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -138,7 +140,7 @@ class ContenedorMongoDB {
             return collectionObject
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -161,7 +163,7 @@ class ContenedorMongoDB {
             }
 
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -180,7 +182,7 @@ class ContenedorMongoDB {
             return collectionObject
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -201,7 +203,7 @@ class ContenedorMongoDB {
             return collectionObject
         
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -216,10 +218,12 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.updateOne(query, {$set: newValues});
-        
+            const response = await userCollection.updateOne(query, {$set: newValues});
+      
+            return response
+      
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -233,10 +237,11 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.findOneAndUpdate(query, newValues);
-        
+            const response = await userCollection.findOneAndUpdate(query, newValues);
+            
+            return {deletedDocs: response.deletedCount}
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -255,10 +260,12 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.deleteOne(query);
-    
+            const response = await userCollection.deleteOne(query);
+            
+            return {deletedDocs: response.deletedCount}
+            
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
@@ -274,10 +281,11 @@ class ContenedorMongoDB {
         
             const userCollection = userDatabase.collection(collection);
         
-            await userCollection.updateOne({id: objectId}, {$pull: query}, false, true);
-    
+            const response = await userCollection.updateOne({id: objectId}, {$pull: query}, false, true);
+            
+            return response
         } catch(error) {
-            console.log(error)
+            throw new Error(error.message)
         } finally {
             await mongoClient.close();
         }
