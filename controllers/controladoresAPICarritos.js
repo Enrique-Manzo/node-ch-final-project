@@ -15,6 +15,7 @@ const controladoresAPICarrito = {
             if (!userCart) {
                 res.status(404).json({"message": "You haven't added any products to your cart yet."})
             } else {
+                // Uso de Data Transfer Object para determinar los datos que se envían
                 const cartDTO = new DataTransferObject("cart", userCart)
                 res.status(200).json({"cart": cartDTO.dto})
             }

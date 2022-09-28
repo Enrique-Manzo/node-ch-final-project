@@ -1,6 +1,11 @@
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv'
+import * as path from 'path';
 
-const PRIVATE_KEY = "myprivatekey";
+dotenv.config({
+    path: path.resolve(process.cwd(), 'one.env'),
+})
+const PRIVATE_KEY = process.env.PRIVATE_JWT_KEY;
 
 const jwtManager = {
     generateAuthToken: (user) => {

@@ -3,9 +3,11 @@ import dotenv from 'dotenv'
 import * as path from 'path';
 import parseArgs from 'minimist';
 
+
 dotenv.config({
     path: path.resolve(process.cwd(), 'one.env'),
 })
+
 
 const args = parseArgs(process.argv.slice(2))
 

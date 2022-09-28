@@ -29,6 +29,7 @@ const controladoresAPIProducts = {
         if (!product) {
             res.status(404).json({"message": "item not found"})
         } else {
+            // Uso de Data Transfer Object para determinar los datos que se envían
             const productDTO = new DataTransferObject("product", product)
             res.status(200).json(productDTO.dto)
         }

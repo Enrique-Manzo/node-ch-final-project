@@ -71,14 +71,17 @@ class Cart {
         this.products = []
     }
 
+    // Agrega un producto al carrito
     async addProductToCart(userId, product) {
       
+        // Controla que se brinde un producto
         if (!product) {
             throw new Error("You must provide a product to add")
         }
 
         const cart = await CartManager.findCartById(userId);
         
+        // Si no existe un carrito, crea uno y prepara el producto para ingresarlo
         if (!cart) {
             try {
                 const newCart = new Cart(userId)
@@ -100,6 +103,7 @@ class Cart {
 
         const productExists = await CartManager.findProductById(userId, product.id)
        
+        // Si no existe el producto en el carrito todavía, lo prepara y inserta
         if (!productExists) {
             try {
                 const productDTO = new DataTransferObject("product", product)
@@ -112,6 +116,7 @@ class Cart {
             }
         }
 
+        // Aumenta la cantidad del producto ya existente
         try {
             await CartManager.increaseProductAmount(userId, product.id)
             return {"success": "Another product of the same type successfully added to cart"}
@@ -134,9 +139,11 @@ class Order {
         this.products = cart.products
     }
 
+    // Guarda la orden en la base de datos
     async submitOrder(order) {
 
         try {
+            // Object.assing para obtener los campos frizados
             await OrderManager.insertNewOrder(Object.assign({}, order));
 
             await CartManager.deleteAllProductsFromCart(this.clientId);
@@ -154,7 +161,7 @@ class Order {
 
             const user = await UserManager.findUserById(order.clientId)
 
-            // create reusable transporter object using the default SMTP transport
+            // Create el transporter de nodemailer - hecho con sendinblue (Gmail ya no acepta con solo email y pass)
             const transporter = nodemailer.createTransport({
                 host: 'smtp-relay.sendinblue.com',
                 port: 587,

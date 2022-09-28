@@ -14,6 +14,7 @@ const controladoresAPIOrders = {
             const orders = await OrderManager.getAllOrdersByClientId(clientId)
             const ordersDTO = []
             for (let order of orders) {
+                // Uso de Data Transfer Object para determinar los datos que se envían
                 const orderDTO = new DataTransferObject("order", order)
                 ordersDTO.push(orderDTO.dto)
             }
