@@ -7,12 +7,13 @@ import ControladorImages from "../controllers/controladoresAPIImages.js";
 import multer from "multer";
 import { v4 } from "uuid";
 import controladoresAPIOrders from "../controllers/controladoresAPIOrders.js";
+import * as path from 'path';
 
 // MULTER
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '../public/images')
+        cb(null, path.resolve(process.cwd(), 'public/images'))
     },
     filename: function (req, file, cb) {
         const finalName = `${v4()}-image-${file.originalname.replaceAll(" ", "")}`
