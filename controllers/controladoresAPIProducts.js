@@ -64,9 +64,12 @@ const controladoresAPIProducts = {
         try {
             const response = await ProductManager.deleteById(id)
             
-            response.deletedDocs > 0 ?? res.status(200).json({"message": "product deletion successful."})
-
-            res.status(400).json({"error": "No files deleted. Please check the parameters provided."})
+            if (response.deletedDocs > 0) {
+                res.status(200).json({"message": "product deletion successful."})
+            } else {
+                res.status(400).json({"error": "No files deleted. Please check the parameters provided."})
+            }
+            
         } catch (err) {
             res.json({"error": err.message})
         }
